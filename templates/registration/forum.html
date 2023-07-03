@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h1>Discussion Forum</h1>
+
+  <h2>New Comment</h2>
+  <form method="post">
+    {% csrf_token %}
+    {{ comment_form.as_p }}
+    <button type="submit">Submit Comment</button>
+  </form>
+
+  <hr>
+
+  {% for comment_data in data %}
+    <div class="comment">
+      <h3>{{ comment_data.student }} said:</h3>
+      <p>{{ comment_data.post }}</p>
+      {% if comment_data.replies %}
+        <h4>Replies:</h4>
+        {% for reply_data in comment_data.replies %}
+          <div class="reply">
+            <h5>{{ reply_data.student }} replied:</h5>
+            <p>{{ reply_data.post }}</p>
+          </div>
+        {% endfor %}
+      {% endif %}
+      <h4>Reply:</h4>
+      <form method="post">
+        {% csrf_token %}
+        {{ comment_data.form.as_p }}
+        <button type="submit">Submit Reply</button>
+      </form>
+    </div>
+  {% endfor %}
+{% endblock %}
+

@@ -1,0 +1,174 @@
+{% extends "base.html" %}
+{% block title %} Dashboard{% endblock %}
+{% block content %}
+<style type="text/css">
+    body {
+  margin: 0;
+  padding: 0;
+  position: relative; /* add this line to make .dashboard-menu-icon position relative to body */
+}
+.dashboard-menu {
+  position: fixed;
+  top: 0;
+  right: 0; /* change left to right to align it to the right corner */
+  background-color: #333;
+  color: #fff;
+  padding: 20px;
+  width: 300px;
+  height: 100%;
+  transform: translateX(100%); /* change translateX to 100% */
+  transition: transform 0.3s ease-in-out;
+}
+.dashboard-menu.active {
+  transform: translateX(0);
+}
+.dashboard-menu-icon {
+  position: absolute; /* change position from fixed to absolute */
+  top: 20px;
+  right: 20px; /* change left to right */
+  color: #fff;
+  font-size: 30px;
+  cursor: pointer;
+}
+.post-list {
+  margin-top: 50px;
+}
+.post-item {
+  margin-bottom: 20px;
+  padding: 10px;
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+}
+.post-title {
+  font-weight: bold;
+  font-size: 20px;
+}
+.post-date {
+  font-size: 14px;
+  color: #999;
+}
+.post-content {
+  margin-top: 10px;
+  font-size: 16px;
+}
+
+button[type="submit"] {
+  background-color: #2196F3;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+button[type="submit"]:hover {
+  background-color: #0D47A1;
+}
+
+.image-gallery {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+}
+
+.image-container {
+  margin: 10px;
+  position: relative;
+  flex-basis: calc(25% - 20px);
+  padding: 10px;
+  border: 7px solid #ddd;
+  background-color: #fff;
+}
+
+.image-description {
+  background-color: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  font-size: 14px;
+  padding: 5px 10px;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 94%;
+}
+.image-container .image-description {
+  max-height: 1.2em; /* show only one line of text */
+  overflow: hidden;
+}
+
+.image-container.show-full .image-description {
+  max-height: initial; /* show full text */
+}
+
+.image-container:nth-child(4n+1) {
+  clear: left;
+}
+
+.image-container img {
+  display: block;
+  height: auto;
+  max-width: 100%;
+}
+
+@media (max-width: 768px) {
+  .image-container {
+    flex-basis: calc(50% - 20px);
+  }
+}
+
+@media (max-width: 480px) {
+  .image-container {
+    flex-basis: calc(100% - 20px);
+  }
+}
+
+</style>
+</head>
+<body>
+<div class="dashboard-menu">
+    <br><br><br><br>
+    <p><a href="{% url 'dashboard' %}">Home</a></p>
+    <p><a href="{% url 'forum' %}">Discussion Forum</a></p>
+    <p><a href="{% url 'password_change' %}">Change Password</a></p>
+    <a href="{% url 'logout' %}">Logout </a>
+</div>
+<div class="dashboard-menu-icon">&#9776;</div>
+
+<h1>Home</h1>
+<form method="get" action="{% url 'upload_image' %}">
+    <button type="submit">New Post</button><br><br><br>
+</form>
+<div class="image-gallery">
+  {% if images %}
+    {% for image in images reversed %}
+      <div class="image-container">
+        <img src="{{ image.image.url }}" alt="{{ image.text }}">
+        <div class="image-description">{{ image.text }}</div>
+      </div>
+      {% if forloop.counter|divisibleby:4 %}
+        <div style="flex-basis: calc(25% - 20px);"></div>
+      {% endif %}
+    {% endfor %}
+  {% else %}
+    <p>No images uploaded yet.</p>
+  {% endif %}
+</div>
+
+</div>
+<script type="text/javascript">
+    var menuIcon = document.querySelector('.dashboard-menu-icon');
+    var dashboardMenu = document.querySelector('.dashboard-menu');
+    menuIcon.addEventListener('click', function() {
+        dashboardMenu.classList.toggle('active');
+    });
+const imageContainers = document.querySelectorAll('.image-container');
+imageContainers.forEach(container => {
+  const description = container.querySelector('.image-description');
+  description.addEventListener('click', () => {
+    container.classList.toggle('show-full');
+  });
+});
+
+</script>
+</body>
+{% endblock %}
